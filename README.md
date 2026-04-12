@@ -1,6 +1,6 @@
 # CMDB-CVE MCP Server
 
-A basic **Model Context Protocol (MCP) server** for vulnerability intelligence automation. This project combines a Configuration Management Database (CMDB) with real-time CVE ingestion from NIST NVD to identify potential exposure across our assets.
+A **Model Context Protocol (MCP) server** for vulnerability intelligence automation. This system combines a Configuration Management Database (CMDB) with real-time CVE ingestion from NIST NVD and leverages **LLM-driven reasoning** for vulnerability correlation.
 
 ---
 
@@ -9,9 +9,9 @@ A basic **Model Context Protocol (MCP) server** for vulnerability intelligence a
 This MCP server enables an AI agent (e.g., Claude Desktop) to:
 
 * Query a **read-only CMDB** (asset inventory)
-* Fetch recent **CVE data from NVD** via NVD REST API
-* Correlate affected assets against known assets in CMDB
-* Generate and send **structured vulnerability report** via email
+* Fetch recent **CVE data from NVD** via the official REST API
+* Perform **LLM-driven, version-aware correlation** between CVEs and assets
+* Generate and send **structured, explainable vulnerability reports** via email
 
 ---
 
@@ -19,9 +19,10 @@ This MCP server enables an AI agent (e.g., Claude Desktop) to:
 
 1. Load assets from CMDB
 2. Fetch CVEs from NVD
-3. Correlate CVEs with assets
-4. Generate vulnerability report
-5. Send report via email
+3. Pre-process and analyze CVEs + assets
+4. LLM performs version-aware correlation
+5. Generate structured vulnerability findings
+6. Send report via email
 
 ---
 
@@ -29,7 +30,7 @@ This MCP server enables an AI agent (e.g., Claude Desktop) to:
 
 ```
 cmdb-cve-mcp/
-├── server.py          # MCP server 
+├── server.py          # MCP server (tool definitions + orchestration)
 ├── cmdb.py            # SQLite-based read-only CMDB with sample assets
 ├── nvd_client.py      # Client to query NVD CVE API
 ├── email_sender.py    # SMTP email utility
@@ -41,32 +42,71 @@ cmdb-cve-mcp/
 
 ## Available MCP Tools
 
-| Tool                        | Description                      | Example Prompt                                                                                                |
-| --------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `list_assets`               | View all CMDB assets (read-only) | "Show me all assets in my CMDB"                                                                               |
-| `fetch_latest_cves`         | Retrieve recent CVEs from NVD    | "Fetch CVEs from the last 7 days with CVSS >= 8"                                                              |
-| `check_vulnerabilities`     | Match CVEs against CMDB assets   | "Check my assets for vulnerabilities in the last 14 days"                                                     |
-| `send_vulnerability_report` | Email formatted report           | "Send a vulnerability report for the last 7 days to [user@example.com](mailto:user@example.com)"      |
-| `run_full_workflow`         | End-to-end CVE scan + report     | "Run full vulnerability workflow for the last 30 days and send it to [user@example.com](mailto:user@example.com)" |
+| Tool                        | Description                                         | Example Prompt                                               |
+| --------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
+| `list_assets`               | View all CMDB assets (read-only)                    | "Show me all assets in my CMDB"                              |
+| `get_assets_json`           | Retrieve assets as structured JSON for LLM analysis | "Get assets in JSON format"                                  |
+| `get_cves_json`             | Retrieve CVEs as structured JSON for LLM analysis   | "Fetch CVEs from last 7 days with CVSS >= 8"                 |
+| `fetch_latest_cves`         | Retrieve CVEs in human-readable format              | "Show latest CVEs"                                           |
+| `send_vulnerability_report` | Send report based on LLM-generated findings         | "Send report to [user@example.com](mailto:user@example.com)" |
 
 ---
 
 ## Guardrails
 
-**Security Guardrails**
+### Security Guardrails
 
-* 🔒 **Read-only CMDB** – prevents any asset modification or prompt injection
+* 🔒 **Read-only CMDB** – prevents asset modification 
 * 🛡️ **Trusted data source** – CVEs fetched only from official NVD API
 * ⚙️ **Restricted tool scope** – no arbitrary command execution
-* 📧 **Secure config** – credentials managed via environment variables
+* 📧 **Secure configuration** – credentials managed via environment variables
 
-**Operational Guardrails**
+---
 
-* ⏱️ **API constraints enforced** – CVE queries capped (max 120 days)
-* 🚦 **Rate-limit aware fetching** – respects NVD API limits
-* 📊 **Bounded results** – limits output content to save API tokens
-* ⚠️ **Heuristic matching** – Avoids false negatives but may increase false positives
+### Operational Guardrails
+
+* ⏱️ **CVE window limits** – capped query range (max 90 days)
+* 🚦 **Rate-limit aware fetching** – respects NVD API constraints
+* 📊 **Bounded outputs** – prevents excessive token usage
+* 🧠 **Guided LLM reasoning** – enforces structured, version-aware decisions
 
 ---
 
 
+## Limitations
+
+### ❗ No Native Version Parser
+
+* Version extraction relies on LLM interpretation of strings
+* May struggle with non-standard version formats and missing version data
+
+
+### ❗ Scalability Issue
+
+* All CVEs and assets may be passed to LLM
+* Can lead to increased latency, higher token usage and reduced efficiency at scale
+
+
+### ❗ LLM Dependency
+
+* Accuracy depends on prompt quality and model capability
+* May cause hallucinations
+
+
+### ❗ No Automated Validation 
+
+* No programmatic verification of LLM decisions
+* Incorrect reasoning may pass through if not reviewed
+
+
+### ❗ No Exploit Intelligence
+
+* Does not consider active exploitation, public exploit availability and threat prioritization
+
+---
+
+
+
+* Cloud/Kubernetes asset discovery
+
+---
