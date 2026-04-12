@@ -46,8 +46,8 @@ cmdb-cve-mcp/
 | --------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
 | `list_assets`               | View all CMDB assets (read-only)                    | "Show me all assets in my CMDB"                              |
 | `get_assets_json`           | Retrieve assets as structured JSON for LLM analysis | "Get assets in JSON format"                                  |
-| `get_cves_json`             | Retrieve CVEs as structured JSON for LLM analysis   | "Fetch CVEs from last 7 days with CVSS >= 8"                 |
-| `fetch_latest_cves`         | Retrieve CVEs in human-readable format              | "Show latest CVEs"                                           |
+| `get_cves_json`             | Retrieve CVEs as structured JSON for LLM analysis   | "Fetch CVEs in JSON format"                 |
+| `fetch_latest_cves`         | Retrieve CVEs in human-readable format              | "Show latest CVEs of last 3 days with CVSS > 9"                                           |
 | `send_vulnerability_report` | Send report based on LLM-generated findings         | "Send report to [user@example.com](mailto:user@example.com)" |
 
 ---
@@ -56,19 +56,19 @@ cmdb-cve-mcp/
 
 ### Security Guardrails
 
-* 🔒 **Read-only CMDB** – prevents asset modification 
-* 🛡️ **Trusted data source** – CVEs fetched only from official NVD API
-* ⚙️ **Restricted tool scope** – no arbitrary command execution
-* 📧 **Secure configuration** – credentials managed via environment variables
+* **Read-only CMDB** – prevents asset modification 
+* **Trusted data source** – CVEs fetched only from official NVD API
+* **Restricted tool scope** – no arbitrary command execution
+* **Secure configuration** – credentials managed via environment variables
 
 ---
 
 ### Operational Guardrails
 
-* ⏱️ **CVE window limits** – capped query range (max 90 days)
-* 🚦 **Rate-limit aware fetching** – respects NVD API constraints
-* 📊 **Bounded outputs** – prevents excessive token usage
-* 🧠 **Guided LLM reasoning** – enforces structured, version-aware decisions
+* **CVE window limits** – capped query range (max 90 days)
+* **Rate-limit aware fetching** – respects NVD API constraints
+* **Bounded outputs** – prevents excessive token usage
+* **Guided LLM reasoning** – enforces structured, version-aware decisions
 
 ---
 
@@ -83,7 +83,7 @@ cmdb-cve-mcp/
 
 ### ❗ Scalability Issue
 
-* All CVEs and assets may be passed to LLM
+* All CVEs and assets may be passed to LLM for co-relation
 * Can lead to increased latency, higher token usage and reduced efficiency at scale
 
 
