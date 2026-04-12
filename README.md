@@ -107,6 +107,3 @@ cmdb-cve-mcp/
 
 
 
-* Cloud/Kubernetes asset discovery
-
----
