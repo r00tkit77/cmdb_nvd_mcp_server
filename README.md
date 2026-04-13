@@ -19,7 +19,7 @@ This MCP server enables an AI agent (e.g., Claude Desktop) to:
 ## Data Flow
 
 1. Load assets from CMDB
-2. Fetch CVEs from NVD
+2. Fetch latest CVEs from NVD
 3. Pre-process and analyze CVEs + assets
 4. LLM performs version-aware correlation
 5. Call Nessus to validate the vulnerability present
