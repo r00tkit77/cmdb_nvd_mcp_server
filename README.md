@@ -1,6 +1,6 @@
 # CMDB-CVE MCP Server
 
-A **Model Context Protocol (MCP) server** for vulnerability intelligence automation. This system combines a Configuration Management Database (CMDB) with real-time CVE ingestion from NIST NVD and leverages **LLM-driven reasoning** for vulnerability correlation.
+A **Model Context Protocol (MCP) server** for vulnerability intelligence automation with Agentic AI. This system combines a Configuration Management Database (CMDB) with real-time CVE ingestion from NIST NVD and leverages **LLM-driven reasoning** for vulnerability correlation.
 
 ---
 
