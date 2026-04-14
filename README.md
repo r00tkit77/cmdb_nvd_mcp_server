@@ -10,8 +10,8 @@ This MCP server enables an AI agent (e.g., Claude Desktop) to:
 
 * Query a **read-only CMDB** (asset inventory)
 * Fetch recent **CVE data from NVD** via the official REST API
-* Perform **LLM-driven, version-aware correlation** between CVEs and assets
-* Perform Nessus scan for the particular asset and CVE plugin
+* Perform **LLM driven** co-relation between CVEs and assets in CMDB
+* Perform Nessus scan on a potentially exposed asset with the CVE plugin
 * Generate and send **structured, explainable vulnerability reports** via email
 
 ---
@@ -20,9 +20,9 @@ This MCP server enables an AI agent (e.g., Claude Desktop) to:
 
 1. Load assets from CMDB
 2. Fetch latest CVEs from NVD
-3. Pre-process and analyze CVEs + assets
-4. LLM performs version-aware correlation
-5. Call Nessus to validate the vulnerability present
+3. Pre-process CVEs and assets
+4. Perform correlation to determine potentially exposed assets
+5. Call Nessus to validate the vulnerability 
 6. Generate structured vulnerability findings
 7. Send report via email
 
